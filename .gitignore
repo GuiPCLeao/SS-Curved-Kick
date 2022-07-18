@@ -1,0 +1,5 @@
+backup
+results/no_cutout
+results/cutout
+results/results
+results/*.zip
