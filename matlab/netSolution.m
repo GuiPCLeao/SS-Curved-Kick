@@ -41,5 +41,5 @@ Xobj_transl_rot = (M(thet)*Xobj_transl);
 [Yf,Xf] = map2Disc(Xobj_transl_rot(:)',xDiscret,yDiscret,Lfield,Hfield);%Yf é o input da rede
 
 out = predict(net,[Yf,rank]);
-out(3) = pi-out(3);
+out(3) = pi + out(3);
 end

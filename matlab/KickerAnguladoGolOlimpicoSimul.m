@@ -4,7 +4,7 @@ animation = true;
 saveVideo = false;
 accelFact = 1;
 
-modelfile = '../results/results/model.h5';
+modelfile = '../results/model.h5';
 net = importKerasNetwork(modelfile);
 % plot(net)
 % title('-- Network Architecture')

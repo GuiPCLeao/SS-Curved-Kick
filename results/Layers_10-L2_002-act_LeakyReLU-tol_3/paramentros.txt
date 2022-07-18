@@ -1,0 +1,6 @@
+Layers: 10
+L2: 0.002
+Activation Function: Leaky ReLU
+Tolerance: 0.3
+Correção: +pi
+Dataset: LargeNoCutOutTol03.csv

@@ -17,7 +17,7 @@ meanError = 0;
 thetaGeneva = 30*pi/180; %Ângulo de inclinação do robo
 
 discField
-modelfile = '../results/results/model.h5';
+modelfile = '../results/model.h5';
 net = importKerasNetwork(modelfile);
 
 
