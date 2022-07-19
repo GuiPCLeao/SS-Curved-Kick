@@ -3,7 +3,7 @@ clear all
 tic
 tol = 0.6;
 
-numberSimuls = 200;
+numberSimuls = 10000;
 countHit = 0;
 
 countNotHit = 0;

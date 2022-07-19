@@ -1,5 +1,3 @@
 backup
-results/no_cutout
-results/cutout
+results/trained_networks
 results/results
-results/*.zip
