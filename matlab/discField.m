@@ -5,12 +5,10 @@ Lfield = 6.0; %m largura do campo da divisão B
 Hfield = 9.0; %m Altura do campo da divisão B
 sRadius = 0.085;
 
-plotField = true;
-
-Xball = [-1.6 -3.4]';
-
-Xally = [-1 -2.3; -0.5 2]';
-Xadv = [2 0.5; 1.2 -2]';
+% Xball = [-1.6 -3.4]';
+% 
+% Xally = [-1 -2.3; -0.5 2]';
+% Xadv = [2 0.5; 1.2 -2]';
 
 ballFlag = 1;
 allyFlag = 2;
@@ -88,7 +86,7 @@ mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 1 for field; 2 fo
 
 
 %% Plotting the field
-if plotField
+if exist('plotField','var') && plotField
     
     fig = figure;
     hold on

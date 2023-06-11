@@ -1,4 +1,5 @@
 clear
+plotField = true;
 run('discField')
 hold on
 
@@ -101,15 +102,16 @@ Xball = kickerAngSolver(Vchute,Wdribbler,thetaGeneva,Xini,thetaRot,Xtarget);
 
 for iii = 1:size(Xball,2)
     [row,col] = map2Disc(Xball(:,iii),xDiscret,yDiscret,Lfield,Hfield);
-    %         if zMeshGridAux(row,col) < advFlag+ballFlag && zMeshGridAux(row,col) ~= ballFlag && zMeshGridAux(row,col) ~= allyFlag
-    %             zMeshGridAux(row,col) = zMeshGridAux(row,col)+ballFlag;
-    %         end
+    if zMeshGridAux(row,col) < advFlag+ballFlag && zMeshGridAux(row,col) ~= ballFlag && zMeshGridAux(row,col) ~= allyFlag
+        zMeshGridAux(row,col) = zMeshGridAux(row,col)+ballFlag;
+    end
     if sqrt((Xball(1,iii)-Xtarget(1)).^2+(Xball(2,iii)-Xtarget(2)).^2) < tol && isempty(find(zMeshGridAux >= advFlag+ballFlag,1))
         hit = true;
         break
     end
 end
 
+zMeshGrid = zMeshGridAux;
 %% plotting
 
 % colormap(mymap)

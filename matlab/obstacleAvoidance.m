@@ -1,4 +1,5 @@
-clear all
+clear 
+plotField = true;
 run('discField')
 hold on
 
@@ -29,7 +30,7 @@ ballFlag = 1;
 allyFlag = 2;
 advFlag = 3;
 
-mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 0 for field; 2 for ball; 3 for ally; 4 for adversary
+mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 0 for field; 1 for ball; 2 for ally; 3 for adversary
 
 %% Populating the field
 

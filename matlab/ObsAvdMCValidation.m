@@ -1,9 +1,8 @@
 clear
 
 tic
-tol = 0.6;
 
-numberSimuls = 200;
+numberSimuls = 10000;
 countHit = 0;
 
 countNotHit = 0;
@@ -26,12 +25,8 @@ advFlag = 3;
 
 mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 0 for field; 2 for ball; 3 for ally; 4 for adversary
 
-
-wait = waitbar(0,'Starting Validation...');
-
 parfor ii = 1:numberSimuls
     zMeshGrid = 0*zDiscret';
-
 
     Xally = [-3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
         -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
@@ -46,11 +41,8 @@ parfor ii = 1:numberSimuls
         -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
         -3 + 6*rand(1,1),-4.5 + 9*rand(1,1)]';
 
-
     Xtarget = Xally(:,2);
     Xini = Xally(:,1);
-
-
 
     Outputs = ObsAvdSolution(Xally,Xadv,Xini,Xtarget,net,xDiscret,yDiscret,Lfield,Hfield);
 
@@ -127,28 +119,29 @@ parfor ii = 1:numberSimuls
         end
     end
 
-%%
+    zMeshGrid = zMeshGridAux;
 
-waitbar(ii/numberSimuls,wait,strcat('Case number:',num2str(ii),' of ',num2str(numberSimuls)));
+    %%
 
-if hit
-    countHit = countHit+1;
-else
-    countNotHit = countNotHit+1;
-    %         if min(sqrt((Xini(1)-Xtarget(1)).^2+(Xini(2)-Xtarget(2)).^2)) < closeDist
-    %             countErrorClose = countErrorClose+1;
-    %
-    %         else
-    %             if min(sqrt((Xini(1)-Xtarget(1)).^2+(Xini(2)-Xtarget(2)).^2)) > farDist
-    %                 countErrorFar = countErrorFar+1;
-    %             end
-    %         end
+    fprintf(['Case number:' num2str(ii) ' of ' num2str(numberSimuls) newline]);
+
+    if hit
+        countHit = countHit+1;
+    else
+        countNotHit = countNotHit+1;
+        %         if min(sqrt((Xini(1)-Xtarget(1)).^2+(Xini(2)-Xtarget(2)).^2)) < closeDist
+        %             countErrorClose = countErrorClose+1;
+        %
+        %         else
+        %             if min(sqrt((Xini(1)-Xtarget(1)).^2+(Xini(2)-Xtarget(2)).^2)) > farDist
+        %                 countErrorFar = countErrorFar+1;
+        %             end
+        %         end
+    end
+
 end
 
-end
-
-close(wait)
-totalTima = toc;
+totalTima = toc
 
 figure
 pieTotalError = [round(countHit/numberSimuls,2) 1-round(countHit/numberSimuls,2)];
