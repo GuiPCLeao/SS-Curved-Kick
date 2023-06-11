@@ -13,12 +13,13 @@ I = (1/0.5805-1)*m*r^2; %Momento de inercia da bola, correção com artigo robocup
 %bizu: Vchute = 6.16 e theta = 58.1°
 Lfield = 6.0; %m largura do campo da divisão B
 Hfield = 9.0; %m Altura do campo da divisão B
-cutTraj = false;
+cutTraj = true;
 
 %% Definição de parâmetros para iteração
 
 TempoTot = 5; %s %Tempo total do movimento da bola
-tspan = [0 TempoTot];
+% tspan = [0 TempoTot];
+tspan = 0:0.01:TempoTot;
 
 %% Definição das condições iniciais
 Xini0 = [0,0]';

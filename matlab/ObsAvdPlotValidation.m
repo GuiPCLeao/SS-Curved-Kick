@@ -1,12 +1,22 @@
-clear all
+clear
 run('discField')
 hold on
 
-modelfile = '../results/LARS/model.h5';
+modelfile = '../results/JINT/obsavd_net.h5';
 net = importKerasNetwork(modelfile);
 
+thetaGeneva = 30*pi/180;
+
+ballFlag = 1;
+allyFlag = 2;
+advFlag = 3;
+
+mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 0 for field; 2 for ball; 3 for ally; 4 for adversary
+
+zMeshGrid = 0*zDiscret';
+
+
 Xally = [-3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
-    -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
     -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
     -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
     -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
@@ -23,13 +33,13 @@ Xadv = [-3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
 Xtarget = Xally(:,2);
 Xini = Xally(:,1);
 
-thetaGeneva = 30*pi/180;
 
-ballFlag = 1;
-allyFlag = 2;
-advFlag = 3;
 
-mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 0 for field; 2 for ball; 3 for ally; 4 for adversary
+Outputs = ObsAvdSolution(Xally,Xadv,Xini,Xtarget,net,xDiscret,yDiscret,Lfield,Hfield);
+
+Vchute = double(Outputs(1));
+Wdribbler = double(Outputs(2));
+thetaRot = double(Outputs(3));
 
 %% Populating the field
 
@@ -67,52 +77,41 @@ end
 
 %% Allies on the field
 for nn = 1:numAlly
-    for ii = 1:size(XallyDisc,2)
-        [row,col] = map2Disc(XallyDisc(:,ii,nn)',xDiscret,yDiscret,Lfield,Hfield);
+    for iii = 1:size(XallyDisc,2)
+        [row,col] = map2Disc(XallyDisc(:,iii,nn)',xDiscret,yDiscret,Lfield,Hfield);
         zMeshGrid(row,col) = allyFlag;
     end
 end
 
 %% Adversaries on the field
 for nn = 1:numAdv
-    for ii = 1:size(XadvDisc,2)
-        [row,col] = map2Disc(XadvDisc(:,ii,nn)',xDiscret,yDiscret,Lfield,Hfield);
+    for iii = 1:size(XadvDisc,2)
+        [row,col] = map2Disc(XadvDisc(:,iii,nn)',xDiscret,yDiscret,Lfield,Hfield);
         zMeshGrid(row,col) = advFlag;
     end
 end
 
 %% Kicking the ball
-zMeshGridAux = zMeshGrid;
-rank = 1;
 hit = false;
-while  rank<10
-    if hit
+
+zMeshGridAux = zMeshGrid;
+
+
+Xball = kickerAngSolver(Vchute,Wdribbler,thetaGeneva,Xini,thetaRot,Xtarget);
+
+for iii = 1:size(Xball,2)
+    [row,col] = map2Disc(Xball(:,iii),xDiscret,yDiscret,Lfield,Hfield);
+    %         if zMeshGridAux(row,col) < advFlag+ballFlag && zMeshGridAux(row,col) ~= ballFlag && zMeshGridAux(row,col) ~= allyFlag
+    %             zMeshGridAux(row,col) = zMeshGridAux(row,col)+ballFlag;
+    %         end
+    if sqrt((Xball(1,iii)-Xtarget(1)).^2+(Xball(2,iii)-Xtarget(2)).^2) < tol && isempty(find(zMeshGridAux >= advFlag+ballFlag,1))
+        hit = true;
         break
     end
-    zMeshGridAux = zMeshGrid;
-    Outputs = netSolution(Xini,Xtarget,xDiscret,yDiscret,Lfield,Hfield,tol,net,rank);
-    
-    Vchute = double(Outputs(1));
-    Wdribbler = double(Outputs(2));
-    thetaRot = double(Outputs(3));
-    
-    Xball = kickerAngSolver(Vchute,Wdribbler,thetaGeneva,Xini,thetaRot,Xtarget);
-    
-    for ii = 1:size(Xball,2)
-        [row,col] = map2Disc(Xball(:,ii),xDiscret,yDiscret,Lfield,Hfield);
-        if zMeshGridAux(row,col) < advFlag+ballFlag && zMeshGridAux(row,col) ~= ballFlag && zMeshGridAux(row,col) ~= allyFlag
-            zMeshGridAux(row,col) = zMeshGridAux(row,col)+ballFlag;
-        end
-        if sqrt((Xball(1,ii)-Xtarget(1)).^2+(Xball(2,ii)-Xtarget(2)).^2) < tol && isempty(find(zMeshGridAux >= advFlag+ballFlag,1))
-            hit = true;
-            break
-        end
-    end
-    rank = rank+1
 end
-zMeshGrid = zMeshGridAux;
-% [row,col] = map2Disc(Xtarget,xDiscret,yDiscret,Lfield,Hfield);
+
 %% plotting
+
 % colormap(mymap)
 % field = pcolor(xMeshGrid*Lfield/length(xDiscret),yMeshGrid*Hfield/length(yDiscret),zMeshGrid);
 % 
@@ -140,6 +139,8 @@ plot(Xtarget(1,1)*ones(1,100) + linspace(-0.75,0.75),Xtarget(2,1)*ones(1,100),'-
 plot(Xtarget(1,1)*ones(1,100),Xtarget(2,1)*ones(1,100)+ linspace(-0.75,0.75),'--','Color','r','LineWidth',2);
 plot(Xtarget(1,1),Xtarget(2,1),'xr','LineWidth',3)
 plot(tol*a+Xtarget(1,1),tol*b+Xtarget(2,1),'--','Color','k','LineWidth',1.5);
+% print -depsc2 out.eps
+% print -dpng -r400 out.png
 
 xDiscMax = size(xMeshGrid,1) - 1;
 yDiscMax = size(yMeshGrid,2) - 1;
