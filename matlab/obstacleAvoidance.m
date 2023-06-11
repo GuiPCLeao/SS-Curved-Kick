@@ -1,4 +1,9 @@
-discField
+clear all
+run('discField')
+hold on
+
+modelfile = 'model.h5';
+net = importKerasNetwork(modelfile);
 
 Xally = [-3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
     -3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
@@ -15,12 +20,17 @@ Xadv = [-3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
     -3 + 6*rand(1,1),-4.5 + 9*rand(1,1)]';
 
 
-Xtarget = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];
+Xtarget = Xally(:,2);
 Xini = Xally(:,1);
 
-ballFlag = 2;
-allyFlag = 3;
-advFlag = 4;
+thetaGeneva = 30*pi/180;
+
+ballFlag = 1;
+allyFlag = 2;
+advFlag = 3;
+
+mymap = [rgb('green');rgb('red');rgb('blue');rgb('yellow')]; % 0 for field; 2 for ball; 3 for ally; 4 for adversary
+
 %% Populating the field
 
 numAdv = size(Xadv,2);
@@ -28,38 +38,38 @@ numAlly = size(Xally,2);
 
 % Creating ally
 
-XallyDisc = ones(2,round(2*sRadius/tol)*round(2*pi/0.2),numAlly);
+XallyDisc = ones(2,round(2*sRadius/tol*2*pi/0.2),numAlly);
 
 for n = 1:1:numAlly
-    rank = 1;
+    count = 1;
     for r = 0:tol/2:sRadius
         for theta = 0:0.2:2*pi
-            XallyDisc(:,rank,n) = Xally(:,n)+[r*sin(theta);r*cos(theta)];
-            rank = rank+1;
+            XallyDisc(:,count,n) = Xally(:,n)+[r*sin(theta);r*cos(theta)];
+            count = count+1;
         end
     end
 end
 
 % Creating adversary
 
-XadvDisc = ones(2,round(2*sRadius/tol)*round(2*pi/0.2),numAdv);
+XadvDisc = ones(2,round(2*sRadius/tol*2*pi/0.2),numAdv);
 
 for n = 1:1:numAdv
-    rank = 1;
+    count = 1;
     for r = 0:tol/2:sRadius
         for theta = 0:0.2:2*pi
-            XadvDisc(:,rank,n) = Xadv(:,n)+[r*sin(theta);r*cos(theta)];
-            rank = rank+1;
+            XadvDisc(:,count,n) = Xadv(:,n)+[r*sin(theta);r*cos(theta)];
+            count = count+1;
         end
     end
 end
 
-zMeshGrid(1,1) = 5;
+
 %% Allies on the field
 for nn = 1:numAlly
     for ii = 1:size(XallyDisc,2)
         [row,col] = map2Disc(XallyDisc(:,ii,nn)',xDiscret,yDiscret,Lfield,Hfield);
-        zMeshGrid(row,col) = 3;
+        zMeshGrid(row,col) = allyFlag;
     end
 end
 
@@ -67,14 +77,18 @@ end
 for nn = 1:numAdv
     for ii = 1:size(XadvDisc,2)
         [row,col] = map2Disc(XadvDisc(:,ii,nn)',xDiscret,yDiscret,Lfield,Hfield);
-        zMeshGrid(row,col) = 4;
+        zMeshGrid(row,col) = advFlag;
     end
 end
 
 %% Kicking the ball
 zMeshGridAux = zMeshGrid;
 rank = 1;
-while ~isempty(zMeshGridAux >=5) && rank<10
+hit = false;
+while  rank<10
+    if hit
+        break
+    end
     zMeshGridAux = zMeshGrid;
     Outputs = netSolution(Xini,Xtarget,xDiscret,yDiscret,Lfield,Hfield,tol,net,rank);
     
@@ -86,54 +100,78 @@ while ~isempty(zMeshGridAux >=5) && rank<10
     
     for ii = 1:size(Xball,2)
         [row,col] = map2Disc(Xball(:,ii),xDiscret,yDiscret,Lfield,Hfield);
-        zMeshGridAux(row,col) = zMeshGridAux(row,col)+ballFlag;
+        if zMeshGridAux(row,col) < advFlag+ballFlag && zMeshGridAux(row,col) ~= ballFlag && zMeshGridAux(row,col) ~= allyFlag
+            zMeshGridAux(row,col) = zMeshGridAux(row,col)+ballFlag;
+        end
+        if sqrt((Xball(1,ii)-Xtarget(1)).^2+(Xball(2,ii)-Xtarget(2)).^2) < tol && isempty(find(zMeshGridAux >= advFlag+ballFlag,1))
+            hit = true;
+            break
+        end
     end
-    rank = rank+1;
+    rank = rank+1
 end
-
-
+zMeshGrid = zMeshGridAux;
+% [row,col] = map2Disc(Xtarget,xDiscret,yDiscret,Lfield,Hfield);
 %% plotting
-field = pcolor(xMeshGrid*Lfield/length(xDiscret),yMeshGrid*Hfield/length(yDiscret),zMeshGrid);
+% colormap(mymap)
+% field = pcolor(xMeshGrid*Lfield/length(xDiscret),yMeshGrid*Hfield/length(yDiscret),zMeshGrid);
+% 
+% field.EdgeColor = [0 0 0];
+% field.LineWidth = 1;
 
-field.EdgeColor = [0 0 0];
-field.LineWidth = 1;
-axis equal
-hold on
+%     zMeshGrid(35,23) = 5;
+%     field = pcolor(xMeshGrid*Lfield/length(xDiscret),yMeshGrid*Hfield/length(yDiscret),zMeshGrid);
+%
+%     field.EdgeColor = [0 0 0];
+%     field.LineWidth = 1;
 
-plot(Xball(1,:),Xball(2,:),'-r')
+
+im.CData = zMeshGrid;
+
+plot(Xball(1,:),Xball(2,:),'Color',rgb('purple'), 'LineWidth', 2)
+
+plot(Xini(1,:),Xini(2,:),'*','Color',rgb('purple'))
+plot(Xtarget(1,:),Xtarget(2,:),'*k')
+
+a = cos(linspace(0,2*pi));
+b = sin(linspace(0,2*pi));
+
+plot(Xtarget(1,1)*ones(1,100) + linspace(-0.75,0.75),Xtarget(2,1)*ones(1,100),'--','Color','r','LineWidth',2);
+plot(Xtarget(1,1)*ones(1,100),Xtarget(2,1)*ones(1,100)+ linspace(-0.75,0.75),'--','Color','r','LineWidth',2);
+plot(Xtarget(1,1),Xtarget(2,1),'xr','LineWidth',3)
+plot(tol*a+Xtarget(1,1),tol*b+Xtarget(2,1),'--','Color','k','LineWidth',1.5);
 
 xDiscMax = size(xMeshGrid,1) - 1;
 yDiscMax = size(yMeshGrid,2) - 1;
 
-a = cos(linspace(0,2*pi));
-b = sin(linspace(0,2*pi));
-%campo
-plot([-0.5 -3 -3 -0.5],[4.5 4.5 -4.5 -4.5],'w','LineWidth',0.5)
-hold all
-grid on
-axis equal
-plot([0.5 3 3 0.5],[-4.5 -4.5 4.5 4.5],'w','LineWidth',0.5)
 
-%Area gol 1
-plot([-1 -1 1 1],[-4.5 -3.5 -3.5 -4.5],'w','LineWidth',2) %gol
-plot([-0.5 0.5],[-4.5 -4.5],'r--')%linha do gol
-
-%Area gol 2
-plot([-1 -1 1 1],[4.5 3.5 3.5 4.5],'w','LineWidth',2) %gol
-plot([-0.5 0.5],[4.5 4.5],'r--')%linha do gol
-
-%center
-plot(0,0,'ro','LineWidth',0.5)
-plot(0.5*a,0.5*b,'w')
-
-%gol 1
-plot([-0.5 -0.5 0.5 0.5],[-4.5 -5 -5 -4.5],'w','LineWidth',4) %gol
-
-%gol 2
-plot([-0.5 -0.5 0.5 0.5],[4.5 5 5 4.5],'w','LineWidth',4) %gol
-
-%big cross
-plot([0 0],[4.5 -4.5],'w','LineWidth',0.5)
-plot([-3 3],[0 0],'w','LineWidth',0.5)
+% %campo
+% plot([-0.5 -3 -3 -0.5],[4.5 4.5 -4.5 -4.5],'w','LineWidth',0.5)
+% hold all
+% grid on
+% axis equal
+% plot([0.5 3 3 0.5],[-4.5 -4.5 4.5 4.5],'w','LineWidth',0.5)
+% 
+% %Area gol 1
+% plot([-1 -1 1 1],[-4.5 -3.5 -3.5 -4.5],'w','LineWidth',2) %gol
+% plot([-0.5 0.5],[-4.5 -4.5],'r--')%linha do gol
+% 
+% %Area gol 2
+% plot([-1 -1 1 1],[4.5 3.5 3.5 4.5],'w','LineWidth',2) %gol
+% plot([-0.5 0.5],[4.5 4.5],'r--')%linha do gol
+% 
+% %center
+% plot(0,0,'ro','LineWidth',0.5)
+% plot(0.5*a,0.5*b,'w')
+% 
+% % %gol 1
+% % plot([-0.5 -0.5 0.5 0.5],[-4.5 -5 -5 -4.5],'k','LineWidth',4) %gol
+% % 
+% % %gol 2
+% % plot([-0.5 -0.5 0.5 0.5],[4.5 5 5 4.5],'k','LineWidth',4) %gol
+% 
+% %big cross
+% plot([0 0],[4.5 -4.5],'w','LineWidth',0.5)
+% plot([-3 3],[0 0],'w','LineWidth',0.5)
 
 hold off

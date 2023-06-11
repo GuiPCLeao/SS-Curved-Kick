@@ -1,17 +1,17 @@
-clear all
+%clear all
 close all
 animation = true;
 saveVideo = false;
 accelFact = 1;
 
-modelfile = '../results/model.h5';
+modelfile = 'model.h5';
 net = importKerasNetwork(modelfile);
 % plot(net)
 % title('-- Network Architecture')
 
 thetaGeneva = 30*pi/180; %Ângulo de inclinação do robo
-Xini = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[2;1]; %posição inicial da bola 4*rand(2,1);%
-Xtarget = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[4;2]; %posição que se deseja atingir com a bola 4*rand(2,1);%
+Xini =[-0.3;-1.5] %[-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[2;1]; %posição inicial da bola 4*rand(2,1);%
+Xtarget = [-2;2.5]%[-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[4;2]; %posição que se deseja atingir com a bola 4*rand(2,1);%
 r = 0.043; %m %Raio da bola
 tol = 0.6;
 %% Sem Rede Neural
@@ -182,7 +182,10 @@ if animation == true
     
 end
 %end
-
+set(gca,'xlim',[-3 3]);
+set(gca,'ylim',[-5 5]);
+set(gca ,'TickLabelInterpreter','latex');
+print -depsc2 image_eps.eps
 
 % plot(X(1,:),X(2,:))
 % hold on
