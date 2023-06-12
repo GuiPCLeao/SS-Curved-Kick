@@ -61,7 +61,7 @@ dataTab(1,:).Target_row=row;
 dataTab(1,:).Target_col=col;
 
 out = predict(net,[dataTab(1,:).Variables]);
-out(1) = out(1) + 0.24;
-out(2) = out(2) - 0.0312*1e3;
-out(3) = out(3) + 0.4635;
+out(1) = out(1);
+out(2) = out(2);
+out(3) = out(3);
 end
