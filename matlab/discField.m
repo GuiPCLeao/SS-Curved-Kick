@@ -14,8 +14,8 @@ ballFlag = 1;
 allyFlag = 2;
 advFlag = 3;
 
-tol = 0.7746;
-% tol = 0.5;
+% tol = 0.7746;
+tol = 0.5;
 l = sqrt(2)*tol/2;
 
 %% Field creation
