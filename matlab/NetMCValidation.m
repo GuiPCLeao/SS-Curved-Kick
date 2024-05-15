@@ -3,7 +3,7 @@ clear all
 tic
 tol = 0.5;
 
-numberSimuls = 10000;
+numberSimuls = 200;
 countHit = 0;
 
 countNotHit = 0;
@@ -17,7 +17,7 @@ meanError = 0;
 thetaGeneva = 30*pi/180; %Ângulo de inclinação do robo
 
 discField
-modelfile = '../results/model.h5';
+modelfile = '../results/results/model.h5';
 net = importKerasNetwork(modelfile);
 
 

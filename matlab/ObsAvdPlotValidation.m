@@ -3,7 +3,7 @@ plotField = true;
 run('discField')
 hold on
 
-modelfile = 'obsavd_net.h5';
+modelfile = '../results/results/model.h5';
 net = importKerasNetwork(modelfile);
 
 thetaGeneva = 30*pi/180;
