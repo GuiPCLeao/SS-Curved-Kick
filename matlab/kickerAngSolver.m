@@ -1,30 +1,30 @@
 function trajetoria = kickerAngSolver(Vchute,Wdribbler,thetaGeneva,Xini,thetaRot,Xobjective)
 
 
-%% Defini��o de parametros gerais
+%% Definição de parametros gerais
 
 m = 0.046; %kg %Massa da bola
-g = 9.81; %m/s� %Gravidade
+g = 9.81; %m/s^2 %Gravidade
 r = 0.043; %m %Raio da bola
-%Vchute = 6.08; % m/s %Velocidade de chute da bola; usar para definur a par�bola
+%Vchute = 6.08; % m/s %Velocidade de chute da bola; usar para definur a parábola
 %Wdribbler = 1000*2*pi/60; %rad/s %Velocidade que o dribbler gira a bola;
-%theta = 58.1*(pi/180); %Angulo do chute, equivale ao angulo da engrenagem + angula��o do robo no chute; angulos da engrenagem: theta e theta/2
-I = (1/0.5805-1)*m*r^2; %Momento de inercia da bola, corre��o com artigo robocup
-%bizu: Vchute = 6.16 e theta = 58.1�
-Lfield = 6.0; %m largura do campo da divis�o B
-Hfield = 9.0; %m Altura do campo da divis�o B
+%theta = 58.1*(pi/180); %Ângulo do chute, equivale ao angulo da engrenagem + angulação do robo no chute; angulos da engrenagem: theta e theta/2
+I = (1/0.5805-1)*m*r^2; %Momento de inercia da bola, correção com artigo robocup
+%bizu: Vchute = 6.16 e theta = 58.1º
+Lfield = 6.0; %m largura do campo da divisão B
+Hfield = 9.0; %m Altura do campo da divisão B
 cutTraj = true;
 
-%% Defini��o de par�metros para itera��o
+%% Definição de parâmetros para iteração
 
 TempoTot = 10; %s %Tempo total do movimento da bola
 % tspan = [0 TempoTot];
 tspan = 0:0.01:TempoTot;
 
-%% Defini��o das condi��es iniciais
+%% Definição das condições iniciais
 Xini0 = [0,0]';
 VcomIni = Vchute.*[cos(pi/2-thetaGeneva-thetaRot); sin(pi/2-thetaGeneva-thetaRot)]; %%bola sai com a velocidade que foi chutada
-WIni = Wdribbler.*[cos(pi/2-thetaRot); sin(pi/2-thetaRot)]; %Rota��o inicial da bola � em apenas 1 eixo, igual a rota��o do dribbler
+WIni = Wdribbler.*[cos(pi/2-thetaRot); sin(pi/2-thetaRot)]; %Rotação inicial da bola é em apenas 1 eixo, igual a rotação do dribbler
 
 % TempoInici = 0; %s %Tempo inicial
 
@@ -46,7 +46,7 @@ Vel = [sol(:,3) sol(:,4)]';
 %         Fat(:,k) = -(CoefAtrit(1,k)*m*g/sqrt((Vcom(1,k))^2+(Vcom(2,k))^2)).*[Vcom(1,k); Vcom(2,k)];
 %         acom(:,k) = Fat(:,k)/m;
 %         
-%         %agora determinar Vk+1,Wk+1 e Xk+1 para proxima itera��o
+%         %agora determinar Vk+1,Wk+1 e Xk+1 para proxima iteração
 %         
 %         Vcom(:,k+1) = Vcom(:,k) + acom(:,k)*deltaT; %verdade para intervalo de tempo pequeno tendendo a 0
 %         W(:,k+1) = W(:,k) -(5/(2*r))*(Vcom(:,k+1)-Vcom(:,k)); %Retirado do artigo da robocup
@@ -56,13 +56,13 @@ Vel = [sol(:,3) sol(:,4)]';
 %     else
 %         CoefAtrit(1,k) = 10/g; %Retirado do artigo da robocup
 %         
-%         Vpc(:,k) = Vcom(:,k)-r*[-W(2,k); W(1,k)]; %esse vetor com W equivale a W vetorial versor k da dire��o Z
+%         Vpc(:,k) = Vcom(:,k)-r*[-W(2,k); W(1,k)]; %esse vetor com W equivale a W vetorial versor k da direção Z
 %         Fat(:,k) = -(CoefAtrit(1,k)*m*g/(sqrt((Vcom(1,k)+r*W(2,k))^2+(Vcom(2,k)-r*W(1,k))^2))).*[Vcom(1,k)+r*W(2,k); Vcom(2,k) - r*W(1,k)];
 %         
 %         acom(:,k) = Fat(:,k)/m;
 %         T(:,k) = r.*[-Fat(2,k); Fat(1,k)];
 %         
-%         %agora determinar Vk+1,Wk+1 e Xk+1 para proxima itera��o
+%         %agora determinar Vk+1,Wk+1 e Xk+1 para proxima iteração
 %         
 %         Vcom(:,k+1) = Vcom(:,k) - acom(:,k)*deltaT; %verdade para intervalo de tempo pequeno tendendo a 0
 %         W(:,k+1) = W(:,k) + (1/I)*T(:,k)*deltaT;
@@ -78,7 +78,7 @@ Vel = [sol(:,3) sol(:,4)]';
 % 
 %% Rotacionando o Robo
 
-%rota��o
+%rotação
 M =@(thet) [cos(thet) sin(thet); -sin(thet) cos(thet)];
 
 for i = 1:length(X)
@@ -101,7 +101,7 @@ else
 end
 
 
-%transla��o
+%translação
 posTranslat =@(x) [x(1,:) + x0(1,:);x(2,:) + x0(2,:)]; 
 
 

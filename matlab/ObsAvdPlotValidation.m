@@ -3,7 +3,7 @@ plotField = true;
 run('discField')
 hold on
 
-modelfile = '../results/results/model.h5';
+modelfile = '../results/opponent_avoidance_network/model.h5';
 net = importKerasNetwork(modelfile);
 
 thetaGeneva = 30*pi/180;

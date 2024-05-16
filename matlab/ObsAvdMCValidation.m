@@ -14,7 +14,7 @@ meanError = 0;
 % farDist = 5;
 
 discField
-modelfile = 'obsavd_net.h5';
+modelfile = '../results/opponent_avoidance_network/model.h5';
 net = importKerasNetwork(modelfile);
 
 thetaGeneva = 30*pi/180;

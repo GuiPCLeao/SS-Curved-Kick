@@ -4,21 +4,21 @@ animation = true;
 saveVideo = false;
 accelFact = 1;
 
-modelfile = '../results/results/model.h5';
+modelfile = '../results/initial_network/model.h5';
 net = importKerasNetwork(modelfile);
 % plot(net)
 % title('-- Network Architecture')
 
-thetaGeneva = 30*pi/180; %Ângulo de inclinação do robo
-Xini = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[2;1]; %posição inicial da bola 4*rand(2,1);%
-Xtarget = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[4;2]; %posição que se deseja atingir com a bola 4*rand(2,1);%
+thetaGeneva = 30*pi/180; %Ã‚ngulo de inclinaÃ§Ã£o do robo
+Xini = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[2;1]; %posiÃ§Ã£o inicial da bola 4*rand(2,1);%
+Xtarget = [-3 + 6*rand(1,1);-4.5 + 9*rand(1,1)];%[4;2]; %posiÃ§Ã£o que se deseja atingir com a bola 4*rand(2,1);%
 r = 0.043; %m %Raio da bola
 tol = 0.5;
 %% Sem Rede Neural
 
 % Vchute = 8; %Velocidade inicial do chute
 % Wdribbler = 10000*2*pi/60; %rad/s %Velocidade que o dribbler gira a bola;
-% thetaRot = 50*pi/180; %Ângulo de inclinação do robo
+% thetaRot = 50*pi/180; %Ã¢ngulo de inclinaÃ§Ã£o do robo
 
 %% Rede Neural
 
@@ -152,7 +152,7 @@ if animation == true
         plot(Xtarget(1,1)*ones(1,100),Xtarget(2,1)*ones(1,100)+ linspace(-0.25,0.25),'--r');
         plot(Xtarget(1,1),Xtarget(2,1),'ob')
         plot(tol*a+Xtarget(1,1),tol*b+Xtarget(2,1),'--r');
-        %% gerando animação
+        %% gerando animaÃ§Ã£o
         %bal movimento+video
         
         plot(X(1,:),X(2,:));
@@ -193,7 +193,7 @@ print -depsc2 image_eps.eps
 % %% fitting polinomial da curvahSurface = surf(peaks(20));
 %
 %
-% s = polyfit(X(1,:),X(2,:),4); %interpolação do resultado
+% s = polyfit(X(1,:),X(2,:),4); %interpolaÃ§Ã£o do resultado
 % %plot(X(1,:),polyval(s,X(1,:)))
 %
 % pos = @(x) s(1)*x.^4+s(2)*x.^3 + s(3)*x.^2 + s(4)*x + s(5);
@@ -206,7 +206,7 @@ print -depsc2 image_eps.eps
 % % plot(X(1,:), Xf(Vchute,theta,X(1,:)),'--')
 %
 
-%% Coleta de parâmetros da curva
+%% Coleta de parÃ¢metros da curva
 %
 % Y = pos(X(1,:));
 %

@@ -3,7 +3,7 @@ plotField = true;
 run('discField')
 hold on
 
-modelfile = 'model.h5';
+modelfile = '../results/initial_network/model.h5';
 net = importKerasNetwork(modelfile);
 
 Xally = [-3 + 6*rand(1,1),-4.5 + 9*rand(1,1);...
