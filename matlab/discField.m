@@ -14,8 +14,8 @@ ballFlag = 1;
 allyFlag = 2;
 advFlag = 3;
 
-% tol = 0.7746;
 tol = 0.5;
+% tol = 0.5;
 l = sqrt(2)*tol/2;
 
 %% Field creation
@@ -90,7 +90,7 @@ if exist('plotField','var') && plotField
     
     fig = figure;
     hold on
-    % clim(gca,[0 4])
+    clim(gca,[0 4])
     colormap(fig,mymap)
     %     zMeshGrid(35,23) = 5;
     %     field = pcolor(xMeshGrid*Lfield/length(xDiscret),yMeshGrid*Hfield/length(yDiscret),zMeshGrid);

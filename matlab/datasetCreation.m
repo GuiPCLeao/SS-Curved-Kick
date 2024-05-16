@@ -109,7 +109,7 @@ discField
 %     zMeshGrid(yrange,11)=yrangeStats;
     waitbar(1,f,'Saving dataset')
     save TreinaPosicGeneva
-    writematrix(TreinaPosicGeneva,'TreinaPosicGeneva.csv') 
+    writematrix(TreinaPosicGeneva,'TreinaPosicGeneva_tol05.csv') 
     close(f)
 % else
 %     load TreinaPosicGeneva

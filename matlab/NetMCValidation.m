@@ -36,9 +36,12 @@ while ii <numberSimuls
     % end
 
     X = kickerAngSolver(Vtarget,Wtarget,deg2rad(30),Xini,thetatarget,Xtarget);
+    X(:,abs(X(1,:)) > 3) = [];
+    X(:,abs(X(2,:)) > 4.5) = [];
+    
     if size(X,2)>2
         Xini = X(:,1);
-        Xtarget = X(:,randi([2,size(X,2)]));
+        Xtarget = X(:,randi([3,size(X,2)]));
 
         Outputs = netSolution(Xini,Xtarget,xDiscret,yDiscret,Lfield,Hfield,tol,net,1);
 

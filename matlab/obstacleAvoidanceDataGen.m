@@ -3,7 +3,7 @@ tic
 run('discField')
 % hold on
 datasize = 300000;
-modelfile = 'model.h5';
+modelfile = '../results/initial_network/model.h5';
 net = importKerasNetwork(modelfile);
 
 thetaGeneva = 30*pi/180;
@@ -185,5 +185,5 @@ end
 dataTab(dataTab.V == 0,:)=[];
 size(dataTab)
 
-save('dataTab.mat','dataTab')
+save('dataTab_tol05.mat','dataTab')
 toc
